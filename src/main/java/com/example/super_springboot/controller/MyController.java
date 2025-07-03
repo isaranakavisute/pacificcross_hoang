@@ -25,6 +25,9 @@ import com.example.super_springboot.entity.PdBenHead;
 import com.example.super_springboot.entity.PdPlan;
 import com.example.super_springboot.entity.PdPlanBenefit;
 import com.example.super_springboot.entity.PdPlanLimit;
+import com.example.super_springboot.entity.VwPchiMobileBenefit;
+import com.example.super_springboot.entity.VwPchiMobileClaim;
+import com.example.super_springboot.entity.VwPchiMobileClaimDetail;
 import com.example.super_springboot.repository.ADODB_LOGSQLRepository1;
 import com.example.super_springboot.repository.CL_CLAIM_Repository;
 import com.example.super_springboot.repository.CL_LINE_Repository;
@@ -38,6 +41,9 @@ import com.example.super_springboot.repository.MR_POLICY_Repository;
 import com.example.super_springboot.repository.PD_BEN_HEAD_Repository;
 import com.example.super_springboot.repository.PD_PLAN_BENEFIT_Repository;
 import com.example.super_springboot.repository.PD_PLAN_Repository;
+import com.example.super_springboot.repository.VwPchiMobileBenefit_Repository;
+import com.example.super_springboot.repository.VwPchiMobileClaimDetail_Repository;
+import com.example.super_springboot.repository.VwPchiMobileClaim_Repository;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -63,13 +69,17 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+
+//import static org.junit.jupiter.api.DynamicTest.stream;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -142,6 +152,15 @@ public class MyController {
 
     @Autowired
     private PD_PLAN_LIMIT_Repository pd_plan_limit_repository;
+
+    @Autowired
+    private VwPchiMobileBenefit_Repository VwPchiMobileBenefit_repository;
+
+    @Autowired
+    private VwPchiMobileClaim_Repository VwPchiMobileClaim_repository;
+
+    @Autowired
+    private VwPchiMobileClaimDetail_Repository VwPchiMobileClaimDetail_repository;
 
     @GetMapping("/")
     public String home() {
@@ -551,9 +570,9 @@ public class MyController {
         }
     }
 
-    @PostMapping(path="/inquiry_benefit")
+    @PostMapping(path="/inquiry_benefit_old2")
     //public member_info inquiry_benefit(@RequestParam Map<String, String> requestParams) {
-    public inquiry_benefit inquiry_benefit(@RequestParam Map<String, String> requestParams) {
+    public inquiry_benefit inquiry_benefit_old2(@RequestParam Map<String, String> requestParams) {
         String MBR_NO = requestParams.get("MBR_NO");
         //String ID_CARD_NO = requestParams.get("ID_CARD_NO");
         //String TIN = requestParams.get("TIN");
@@ -609,7 +628,9 @@ public class MyController {
                             List<PdBenHead> pd_ben_head_obj = (List<PdBenHead>) pd_ben_head_repository.get_BEN_HEAD(pd_plan_benefit_obj.get(0).getBehdOid());
                             if (pd_ben_head_obj.size() >= 1)
                             {
-                                member_info_obj.setBEN_HEAD(pd_ben_head_obj.get(0).getBenHead());
+                                //member_info_obj.setBEN_HEAD(pd_ben_head_obj.get(0).getBenHead());
+                                member_info_obj.setBenefitID(pd_ben_head_obj.get(0).getBenHead());
+
                                 member_info_obj.setCoverage(pd_ben_head_obj.get(0).getSCMA_OID_BEN_TYPE());
                                 member_info_obj.setBenefitName(pd_ben_head_obj.get(0).getSCMA_OID_BEN_TYPE());
                                 member_info_obj.setBenefitUnit("THB");
@@ -785,6 +806,11 @@ public class MyController {
         }
     }
 
+    @PostMapping(path="/inquiry_benefit")
+    public List<VwPchiMobileBenefit> inquiry_benefit(@RequestParam Map<String, String> requestParams) {
+        String MBR_NO = requestParams.get("MBR_NO");
+        return (List<VwPchiMobileBenefit>) VwPchiMobileBenefit_repository.get_VwPchiMobileBenefits_From_MBR_NO(MBR_NO);
+    }
 
     @PostMapping(path="/inquiry_claim_header_old")
     public claim_info inquiry_claim_header_old(@RequestParam Map<String, String> requestParams) {
@@ -826,9 +852,9 @@ public class MyController {
         return claim_info_obj;
     }
 
-    @PostMapping(path="/inquiry_claim_header")
+    @PostMapping(path="/inquiry_claim_header_old2")
     //public List<claim_info> inquiry_claim_header2(@RequestParam Map<String, String> requestParams) {
-    public List<inquiry_claim_header> inquiry_claim_header(@RequestParam Map<String, String> requestParams) {
+    public List<inquiry_claim_header> inquiry_claim_header_old2(@RequestParam Map<String, String> requestParams) {
       
         String MBR_NO = requestParams.get("MBR_NO");
         List<MrMember> member_obj = (List<MrMember>) mr_member_repository.get_MEMB_OID_From_MBR_NO(MBR_NO);
@@ -845,51 +871,86 @@ public class MyController {
             List<ClClaim> claim_obj = (List<ClClaim>) cl_claim_repository.get_CL_CLaim_From_CLAIM_OID(cline_objs.get(i).getClamOid());
             if (claim_obj.size() >= 1) {
                 //claim_info_obj.setClaim_id(claim_obj.get(0).getClamOid());
-                claim_info_obj.setClaim_no(claim_obj.get(0).getClNo());
-                claim_info_obj.setStatus(claim_obj.get(0).getScmaOidClStatus());
+
+                if (claim_obj.get(0).getClNo() != null)
+                 claim_info_obj.setClaim_no(claim_obj.get(0).getClNo());
+
+                if  (claim_obj.get(0).getScmaOidClStatus() != null)
+                 claim_info_obj.setStatus(claim_obj.get(0).getScmaOidClStatus());
+ 
+                if  (claim_obj.get(0).getScmaOidClStatus() != null)
                 claim_info_obj.setStatus_th(claim_obj.get(0).getScmaOidClStatus());
+
                 List<ClLine> cline_obj = (List<ClLine>) cl_line_repository.get_CL_Line(claim_obj.get(0).getClamOid());          
                 if (cline_obj.size() >= 1) {
-                    LocalDate min_incur_date_from = cline_obj.get(0).getIncurDateFrom();
+
+                    //LocalDate min_incur_date_from = cline_obj.get(0).getIncurDateFrom();
+                    LocalDate min_incur_date_from = LocalDate.MAX;
+                    claim_info_obj.setStart("");
                     for (int j = 0 ; j < cline_obj.size() ; j++)
                     {
-                        if (cline_obj.get(j).getIncurDateFrom().compareTo(min_incur_date_from) < 0)
+                        if (cline_obj.get(j).getIncurDateFrom() != null)
                         {
-                            min_incur_date_from = cline_obj.get(j).getIncurDateFrom();
+                         if (cline_obj.get(j).getIncurDateFrom().compareTo(min_incur_date_from) < 0)
+                         {
+                          min_incur_date_from = cline_obj.get(j).getIncurDateFrom();
+                          claim_info_obj.setStart(min_incur_date_from.toString());
+                         }
                         }
                     }
-                    claim_info_obj.setStart(min_incur_date_from.toString());
-                    LocalDate max_incur_date_to = cline_obj.get(0).getIncurDateTo();
+                    //claim_info_obj.setStart(min_incur_date_from.toString());
+
+                    //LocalDate max_incur_date_to = cline_obj.get(0).getIncurDateTo();
+                    LocalDate max_incur_date_to = LocalDate.MIN;
+                    claim_info_obj.setFinish("");
                     for (int j = 0 ; j < cline_obj.size() ; j++)
                     {
-                        if (cline_obj.get(j).getIncurDateTo().compareTo(max_incur_date_to) > 0)
+                        if (cline_obj.get(j).getIncurDateTo() != null)
                         {
-                            max_incur_date_to = cline_obj.get(j).getIncurDateTo();
+                         if (cline_obj.get(j).getIncurDateTo().compareTo(max_incur_date_to) > 0)
+                         { 
+                          max_incur_date_to = cline_obj.get(j).getIncurDateTo();
+                          claim_info_obj.setFinish(max_incur_date_to.toString());
+                         } 
                         }
                     }
-                    claim_info_obj.setFinish(max_incur_date_to.toString());
-                    claim_info_obj.setClaim_type(cline_obj.get(0).getScmaOidClType());
+                    //claim_info_obj.setFinish(max_incur_date_to.toString());
+
+                    if (cline_obj.get(0).getScmaOidClType() != null)
+                     claim_info_obj.setClaim_type(cline_obj.get(0).getScmaOidClType());
+
                     BigDecimal result = BigDecimal.valueOf(0);
                     for (int j = 0 ; j < cline_obj.size() ; j++)
                     {
-                        result = result.add(cline_obj.get(j).getPresAmt());
+                        if (cline_obj.get(j).getPresAmt() != null)
+                         result = result.add(cline_obj.get(j).getPresAmt());
                     }
                     claim_info_obj.setBilled(result);
+
                     result = BigDecimal.valueOf(0);
                     for (int j = 0 ; j < cline_obj.size() ; j++)
                     {
-                        result = result.add(cline_obj.get(j).getAppAmt());
+                        if (cline_obj.get(j).getAppAmt() != null)
+                         result = result.add(cline_obj.get(j).getAppAmt());
                     }
                     claim_info_obj.setAccepted(result);
+
                     result = BigDecimal.valueOf(0);
                     for (int j = 0 ; j < cline_obj.size() ; j++)
                     {
+                        if (cline_obj.get(j).getPresAmt() != null && cline_obj.get(j).getAppAmt() != null)
                         result = result.add(cline_obj.get(j).getPresAmt().subtract(cline_obj.get(j).getAppAmt()));
                     }
                     claim_info_obj.setUnpaid(result);
-                    claim_info_obj.setCash_member(cline_obj.get(0).getPriorPaid());
-                    claim_info_obj.setTotal_paid(cline_obj.get(0).getPayAmt());
-                    claim_info_obj.setCoverage(cline_obj.get(0).getScmaOidBedType());
+
+                    if (cline_obj.get(0).getPriorPaid() != null)
+                     claim_info_obj.setCash_member(cline_obj.get(0).getPriorPaid());
+
+                    if (cline_obj.get(0).getPayAmt() != null)
+                     claim_info_obj.setTotal_paid(cline_obj.get(0).getPayAmt());
+
+                    if (cline_obj.get(0).getScmaOidBedType() != null)
+                     claim_info_obj.setCoverage(cline_obj.get(0).getScmaOidBedType());
 
                     if (cline_obj.get(0).getChqDate()==null)
                     {
@@ -899,8 +960,12 @@ public class MyController {
                     {
                      claim_info_obj.setPayment_date(cline_obj.get(0).getChqDate().toString());
                     }
-                    claim_info_obj.setStatus_code(cline_obj.get(0).getScmaOidClLineStatus());
-                    claim_info_obj.setPay_to(cline_obj.get(0).getPayee());
+
+                    if (cline_obj.get(0).getScmaOidClLineStatus() != null)
+                     claim_info_obj.setStatus_code(cline_obj.get(0).getScmaOidClLineStatus());
+
+                    if (cline_obj.get(0).getPayee() != null)
+                     claim_info_obj.setPay_to(cline_obj.get(0).getPayee());
                 } else {
                     claim_info_list.add(claim_info_obj);
                     return claim_info_list;
@@ -912,6 +977,12 @@ public class MyController {
             claim_info_list.add(claim_info_obj);
         }
         return claim_info_list;
+    }
+
+    @PostMapping(path="/inquiry_claim_header")
+    public List<VwPchiMobileClaim> inquiry_claim_header(@RequestParam Map<String, String> requestParams) {
+        String MBR_NO = requestParams.get("MBR_NO");
+        return (List<VwPchiMobileClaim>) VwPchiMobileClaim_repository.get_VwPchiMobileClaim_From_MBR_NO(MBR_NO);
     }
 
     @PostMapping(path="/inquiry_claim_detail_old")
@@ -956,9 +1027,9 @@ public class MyController {
     }
 
 
-     @PostMapping(path="/inquiry_claim_detail")
+     @PostMapping(path="/inquiry_claim_detail_old2")
     //public List<claim_info> inquiry_claim_detail2(@RequestParam Map<String, String> requestParams) {
-    public List<inquiry_claim_detail> inquiry_claim_detail(@RequestParam Map<String, String> requestParams) {
+    public List<inquiry_claim_detail> inquiry_claim_detail_old2(@RequestParam Map<String, String> requestParams) {
         //List<ClClaim> claim_obj = (List<ClClaim>) cl_claim_repository.get_CL_Line_From_Memb();
         String MBR_NO = requestParams.get("MBR_NO");
         //List<MrMember> member_obj = (List<MrMember>) mr_member_repository.get_MEMB_OID_From_MBR_NO(MBR_NO);
@@ -1067,16 +1138,12 @@ public class MyController {
         return claim_info_list;
     }
 
+    @PostMapping(path="/inquiry_claim_detail")
+    public List<VwPchiMobileClaimDetail> inquiry_claim_detail(@RequestParam Map<String, String> requestParams) {
+        String MBR_NO = requestParams.get("MBR_NO");
+        return (List<VwPchiMobileClaimDetail>) VwPchiMobileClaimDetail_repository.get_VwPchiMobileClaimDetail_From_MBR_NO(MBR_NO);
+    }
 
-
-
-
-
-    
-
-
-
-    
     @PostMapping(path="/write_active_member_to_file")
     //public member_info write_active_member_to_file(@RequestParam Map<String, String> requestParams) throws IOException 
     //public ResponseEntity<HttpServletResponse> write_active_member_to_file(@RequestParam Map<String, String> requestParams, HttpServletResponse response) throws IOException 
@@ -1452,6 +1519,7 @@ public class MyController {
     //   workbook.close();
     //   ops.close();
 
+    
     ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
     workbook.write(outByteStream);
     byte [] outArray = outByteStream.toByteArray();
@@ -1466,6 +1534,9 @@ public class MyController {
     outStream.write(outArray);
     outStream.flush();
 
+    
+
+    
 
     //ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
     ////workbook.write(outByteStream);

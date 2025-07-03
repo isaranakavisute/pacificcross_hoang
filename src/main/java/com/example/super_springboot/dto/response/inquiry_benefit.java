@@ -10,7 +10,10 @@ public class inquiry_benefit {
     private String policy_no; 
     private String toc; 
     private String pplan; 
-    private String BEN_HEAD; 
+
+    //private String BEN_HEAD; 
+    private String BenefitID;
+
     private String coverage; 
     private String BenefitName; 
     private String BenefitUnit; 
@@ -26,7 +29,10 @@ public class inquiry_benefit {
         this.policy_no = "";
         this.toc = "";
         this.pplan = "";
-        this.BEN_HEAD = "";
+
+        //this.BEN_HEAD = "";
+        this.BenefitID = "";
+
         this.coverage = "";
         this.BenefitName = "";
         this.BenefitUnit = "";
