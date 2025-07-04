@@ -69,10 +69,10 @@ public class VwPchiMobileClaim {
     @Column(name = "STATUS", length = 22)
     private String status;
 
-    @Size(max = 200)
-    @Nationalized
-    @Column(name = "COVERAGE", length = 200)
-    private String coverage;
+    // @Size(max = 200)
+    // @Nationalized
+    // @Column(name = "COVERAGE", length = 200)
+    // private String coverage;
 
     @Column(name = "PAYMENT_DATE")
     private LocalDate paymentDate;
