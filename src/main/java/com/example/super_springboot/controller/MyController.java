@@ -8,6 +8,7 @@ import com.example.super_springboot.dto.SQL1;
 import com.example.super_springboot.dto.response.claim_info;
 import com.example.super_springboot.dto.response.inquiry_personal_information;
 import com.example.super_springboot.dto.response.inquiry_benefit;
+import com.example.super_springboot.dto.response.inquiry_benefit1;
 import com.example.super_springboot.dto.response.inquiry_claim_header;
 import com.example.super_springboot.dto.response.inquiry_claim_header1;
 import com.example.super_springboot.dto.response.inquiry_claim_detail;
@@ -809,9 +810,13 @@ public class MyController {
     }
 
     @PostMapping(path="/inquiry_benefit")
-    public List<VwPchiMobileBenefit> inquiry_benefit(@RequestParam Map<String, String> requestParams) {
+    //public List<VwPchiMobileBenefit> inquiry_benefit(@RequestParam Map<String, String> requestParams) {
+    public inquiry_benefit1 inquiry_benefit(@RequestParam Map<String, String> requestParams) {  
         String MBR_NO = requestParams.get("MBR_NO");
-        return (List<VwPchiMobileBenefit>) VwPchiMobileBenefit_repository.get_VwPchiMobileBenefits_From_MBR_NO(MBR_NO);
+        inquiry_benefit1 inquiry_benefit1_obj = new inquiry_benefit1();
+        inquiry_benefit1_obj.setData((List<VwPchiMobileBenefit>) VwPchiMobileBenefit_repository.get_VwPchiMobileBenefits_From_MBR_NO(MBR_NO));
+        //return (List<VwPchiMobileBenefit>) VwPchiMobileBenefit_repository.get_VwPchiMobileBenefits_From_MBR_NO(MBR_NO);
+        return inquiry_benefit1_obj;
     }
 
     @PostMapping(path="/inquiry_claim_header_old")
