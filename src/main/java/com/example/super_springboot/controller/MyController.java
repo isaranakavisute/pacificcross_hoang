@@ -11,6 +11,7 @@ import com.example.super_springboot.dto.response.inquiry_benefit;
 import com.example.super_springboot.dto.response.inquiry_claim_header;
 import com.example.super_springboot.dto.response.inquiry_claim_header1;
 import com.example.super_springboot.dto.response.inquiry_claim_detail;
+import com.example.super_springboot.dto.response.inquiry_claim_detail1;
 import com.example.super_springboot.dto.response.member_info;
 import com.example.super_springboot.entity.ADODB_LOGSQL;
 import com.example.super_springboot.entity.ClClaim;
@@ -1144,9 +1145,13 @@ public class MyController {
     }
 
     @PostMapping(path="/inquiry_claim_detail")
-    public List<VwPchiMobileClaimDetail> inquiry_claim_detail(@RequestParam Map<String, String> requestParams) {
+    //public List<VwPchiMobileClaimDetail> inquiry_claim_detail(@RequestParam Map<String, String> requestParams) {
+    public inquiry_claim_detail1 inquiry_claim_detail(@RequestParam Map<String, String> requestParams) {
         String MBR_NO = requestParams.get("MBR_NO");
-        return (List<VwPchiMobileClaimDetail>) VwPchiMobileClaimDetail_repository.get_VwPchiMobileClaimDetail_From_MBR_NO(MBR_NO);
+        inquiry_claim_detail1 inquiry_claim_detail1_obj = new inquiry_claim_detail1();
+        //return (List<VwPchiMobileClaimDetail>) VwPchiMobileClaimDetail_repository.get_VwPchiMobileClaimDetail_From_MBR_NO(MBR_NO);
+        inquiry_claim_detail1_obj.setData((List<VwPchiMobileClaimDetail>) VwPchiMobileClaimDetail_repository.get_VwPchiMobileClaimDetail_From_MBR_NO(MBR_NO));
+        return inquiry_claim_detail1_obj;
     }
 
     @PostMapping(path="/write_active_member_to_file")
