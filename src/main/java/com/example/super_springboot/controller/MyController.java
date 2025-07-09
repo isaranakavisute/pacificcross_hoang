@@ -448,6 +448,9 @@ public class MyController {
         String UPD_DATE = requestParams.get("UPD_DATE");
         String SEQ = requestParams.get("SEQ");
 
+        if (requestParams.get("SEQ") == null)
+         SEQ = "1";                
+
         Long begining_seq = (long) (((Integer.valueOf(SEQ)) - 1) * 1000) + 1;
         Long ending_seq = (long) Integer.valueOf(SEQ) * 1000;
 
