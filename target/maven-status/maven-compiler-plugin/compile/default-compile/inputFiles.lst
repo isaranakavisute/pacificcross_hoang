@@ -11,6 +11,7 @@ C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\re
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\entity\SySysCode.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\service\ClaimValidationService.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\entity\VwPchiMobileClaim.java
+C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\dto\response\inquiry_personal_information1.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\service\ClaimService.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\repository\MR_POLICY_Repository.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\entity\PvProvider.java
@@ -48,6 +49,7 @@ C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\re
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\controller\ClaimController.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\entity\ClLine.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\entity\PdBenHead.java
+C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\repository\VwPchiMobilePersonalInfo_Repository.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\controller\MyController.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\entity\PdPlan.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\entity\PdPlanBenefit.java
@@ -60,6 +62,7 @@ C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\re
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\SuperSpringbootApplication.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\helper\utils\DateUtils.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\dto\response\inquiry_claim_detail1.java
+C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\entity\VwPchiMobilePersonalInfo.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\repository\MR_MEMBER_Repository.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\entity\MrMemberPlan.java
 C:\Users\isara.n\gitlab_api_hoang1\src\main\java\com\example\super_springboot\entity\MrPolicyholder.java
